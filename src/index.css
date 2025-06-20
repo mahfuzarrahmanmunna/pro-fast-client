@@ -7,4 +7,11 @@
 @theme {
     --font-urbanist: "Urbanist", sans-serif;
   }
+
+  @plugin "daisyui/theme" {
+    name: "light";
+    default: true;
+    --color-primary: #CAEB66;
+    --color-secondary: teal;
+  }
   
