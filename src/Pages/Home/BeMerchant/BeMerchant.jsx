@@ -7,7 +7,7 @@ const BeMerchant = () => {
             <div className="hero-content flex-col lg:flex-row-reverse">
                 <img
                     src={location}
-                    className="max-w-sm rounded-lg"
+                    className="max-w-sm rounded-lg" 
                 />
                 <div>
                     <h1 className="text-5xl text-white font-bold">Merchant and Customer Satisfaction is Our First Priority</h1>
