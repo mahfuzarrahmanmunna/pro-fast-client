@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
+import SocialLogin from '../ScosalLogin/SocialLogin';
 
 const LogIn = () => {
     const {
@@ -41,6 +42,7 @@ const LogIn = () => {
                     <button className="btn btn-primary text-black mt-4">Login</button>
                 </form>
                 <p>New to this website. Please <Link className='text-blue-500 underline' to='/register'>Register</Link></p>
+                <SocialLogin />
             </div>
         </div>
     );
