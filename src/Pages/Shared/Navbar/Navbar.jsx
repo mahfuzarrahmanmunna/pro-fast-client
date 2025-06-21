@@ -29,7 +29,7 @@ const Navbar = () => {
     );
 
     return showNavbar && (
-        <div className="navbar bg-base-100 shadow-sm fixed top-0 left-0 right-0 z-50 transition-transform duration-300 backdrop-blur  ">
+        <div className="navbar bg-base-100 px-12 shadow-sm fixed top-0 left-0 right-0 z-50 transition-transform duration-300 backdrop-blur  ">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -41,9 +41,9 @@ const Navbar = () => {
                         {navItems}
                     </ul>
                 </div>
-                <NavLink to="/" className="btn btn-ghost text-xl">
+                <div className="text-xl">
                     <ProFastLogo />
-                </NavLink>
+                </div>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
