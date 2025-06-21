@@ -1,16 +1,27 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import useAuth from '../../../Hooks/useAuth/useAuth';
+import { Link } from 'react-router';
 
 const Register = () => {
+    const { createUser } = useAuth()
     const { register, handleSubmit, formState: { errors } } = useForm()
     const onSubmit = e => {
         console.log(e);
+        console.log(createUser);
+        createUser(e.email, e.password)
+            .then(result => {
+                console.log(result.user);
+            })
+            .catch(err => {
+                console.error(err.code);
+            })
     }
     return (
         <div className="">
             <div className="card bg-base-100 w-full max-w-sm shrink-0 my-12">
                 <div className="card-body">
-                    <h1 className="text-5xl font-bold">Login now!</h1>
+                    <h1 className="text-5xl font-bold">Register now!</h1>
                     <form onSubmit={handleSubmit(onSubmit)} className="fieldset">
                         <label className="label">Email</label>
                         <input type="email" {...register('email', {
@@ -28,7 +39,7 @@ const Register = () => {
                         })} className="input" placeholder="Password" />
                         {
                             errors.password?.type === 'required' && (
-                                <p className='text-red-500'>Password is required</p>
+                                <p className='text-red-500'>Password is required.  </p>
                             )
                         }
                         {
@@ -37,8 +48,9 @@ const Register = () => {
                             )
                         }
                         <div><a className="link link-hover">Forgot password?</a></div>
-                        <button type='submit' className="btn btn-neutral mt-4">Login</button>
+                        <button type='submit' className="btn btn-primary text-black mt-4">Register</button>
                     </form>
+                    <p>Already have an account. Please <Link className='text-blue-500 underline' to='/login'>Login</Link></p>
                 </div>
             </div>
         </div >
