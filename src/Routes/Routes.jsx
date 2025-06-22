@@ -5,6 +5,7 @@ import AboutUs from "../Pages/About/AboutUs";
 import AuthLayouts from "../Layouts/AuthLayouts/AuthLayouts";
 import LogIn from "../Pages/Authentication/LogIn/LogIn";
 import Register from "../Pages/Authentication/Register/Register";
+import Coverage from "../Pages/Coverage/Coverage";
 
 export const router = createBrowserRouter([
     {
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
             {
                 path: '/about-us',
                 Component: AboutUs
+            },
+            {
+                path: '/coverage',
+                Component: Coverage
             }
         ]
     },
