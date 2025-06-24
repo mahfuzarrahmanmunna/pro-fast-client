@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink } from 'react-router';
+import { Link, NavLink } from 'react-router';
 import ProFastLogo from '../ProFast/ProFastLogo';
 
 const Navbar = () => {
@@ -26,6 +26,7 @@ const Navbar = () => {
             <li><NavLink to="/" className={({ isActive }) => isActive ? "text-primary" : ""}>Home</NavLink></li>
             <li><NavLink to="/about-us" className={({ isActive }) => isActive ? "text-primary" : ""}>About Us</NavLink></li>
             <li><NavLink to="/coverage" className={({ isActive }) => isActive ? "text-primary" : ""}>Coverage</NavLink></li>
+            <li><NavLink to="/parcel-send" className={({ isActive }) => isActive ? "text-primary" : ""}>Send a parcel</NavLink></li>
         </>
     );
 
@@ -52,7 +53,9 @@ const Navbar = () => {
                 </ul>
             </div>
             <div className="navbar-end">
-                <a className="btn">Button</a>
+                <Link className='btn btn-primary text-black ' to='/login'>
+                    Login
+                </Link>
             </div>
         </div>
     );
