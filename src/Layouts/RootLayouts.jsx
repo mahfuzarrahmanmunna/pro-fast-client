@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router';
 import Navbar from '../Pages/Shared/Navbar/Navbar';
 import Footer from '../Pages/Shared/Footer/Footer';
+import { Toaster } from 'react-hot-toast';
 
 const RootLayouts = () => {
     return (
@@ -9,6 +10,7 @@ const RootLayouts = () => {
             <Navbar />
             <div className='flex-1 pt-20 transition-colors duration-300'>
                 <Outlet />
+                <Toaster />
             </div>
             <Footer />
         </div>
