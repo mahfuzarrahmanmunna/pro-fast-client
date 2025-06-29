@@ -1,11 +1,12 @@
+import axios from 'axios';
 import React from 'react';
 
-const useAxiosSecure = () => {
-    return (
-        <div>
+const axiosSecure = axios.create({
+    baseURL: 'http://localhost:3000/',
+})
 
-        </div>
-    );
+const useAxiosSecure = () => {
+    return axiosSecure
 };
 
 export default useAxiosSecure;
