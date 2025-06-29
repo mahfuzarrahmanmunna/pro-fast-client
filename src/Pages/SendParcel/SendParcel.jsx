@@ -159,7 +159,7 @@ const SendParcel = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const res = await fetch(`${import.meta.env.VITE_API_URL}/parcels`, {
+                    const res = await fetch(`${import.meta.env.VITE_API_URL}/add-parcel`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(fullData),
