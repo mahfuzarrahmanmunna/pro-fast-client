@@ -1,4 +1,5 @@
 import React from 'react';
+import { Outlet } from 'react-router';
 
 const DashboardLayout = () => {
     return (
@@ -7,7 +8,7 @@ const DashboardLayout = () => {
             <div className="drawer-content flex flex-col ">
                 {/* Page content here */}
                 <div className="navbar bg-base-300 w-full block lg:hidden">
-                    <div className="flex-none lg:hidden">
+                    <div className="flex items-center justify-center lg:hidden">
                         <label htmlFor="my-drawer-2" aria-label="open sidebar" className="btn btn-square btn-ghost">
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -23,9 +24,11 @@ const DashboardLayout = () => {
                                 ></path>
                             </svg>
                         </label>
+                        <div className="mx-2 flex-1 px-2">Dashboard</div>
                     </div>
-                    <div className="mx-2 flex-1 px-2">Dashboard</div>
+
                 </div>
+                <Outlet />
             </div>
             <div className="drawer-side">
                 <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
