@@ -56,7 +56,7 @@ export const router = createBrowserRouter([
         </PrivateRoutes>,
         children: [
             {
-                index: true,
+               path: 'my-parcel',
 
             }
         ]
