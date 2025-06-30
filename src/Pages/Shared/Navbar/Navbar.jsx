@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router';
 import ProFastLogo from '../ProFast/ProFastLogo';
+import useAuth from '../../../Hooks/useAuth/useAuth';
 
 const Navbar = () => {
     const [showNavbar, setShowNavbar] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
+    const { user } = useAuth()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -27,6 +29,11 @@ const Navbar = () => {
             <li><NavLink to="/about-us" className={({ isActive }) => isActive ? "text-primary" : ""}>About Us</NavLink></li>
             <li><NavLink to="/coverage" className={({ isActive }) => isActive ? "text-primary" : ""}>Coverage</NavLink></li>
             <li><NavLink to="/parcel-send" className={({ isActive }) => isActive ? "text-primary" : ""}>Send a parcel</NavLink></li>
+            {user &&
+                <>
+                    <li><NavLink to="/dashboard" className={({ isActive }) => isActive ? "text-primary" : ""}>Dashboard</NavLink></li>
+                </>
+            }
         </>
     );
 
