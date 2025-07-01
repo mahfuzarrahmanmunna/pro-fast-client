@@ -1,15 +1,21 @@
 import React from 'react';
-import useAuth from '../../../Hooks/useAuth/useAuth';
+import { useLocation, useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
+import useAuth from '../../../Hooks/useAuth/useAuth';
 
-const SocialLogin = ({ location, navigate, from }) => {
+const SocialLogin = () => {
     const { googleLogin } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Capture where the user was trying to go before login
+    const from = location.state?.from?.pathname || '/';
 
     const handleGoogleLogin = () => {
         googleLogin()
             .then((result) => {
                 console.log('User:', result.user);
-                navigate(from);  // Redirect to the previous location or default '/'
+                navigate(from); // Redirect to original location or '/'
             })
             .catch((err) => {
                 console.error('Google Login Error:', err);

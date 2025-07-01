@@ -98,7 +98,7 @@ const LogIn = () => {
                     </Link>
                 </p>
 
-                <SocialLogin location={location} form={from} navigate={navigate} />
+                <SocialLogin />
             </div>
         </div>
     );
