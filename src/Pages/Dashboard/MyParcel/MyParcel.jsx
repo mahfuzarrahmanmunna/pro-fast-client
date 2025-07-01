@@ -14,6 +14,7 @@ import useAuth from '../../../Hooks/useAuth/useAuth';
 import useAxiosSecure from '../../../Hooks/useAuth/useAxiosSecure/useAxiosSecure';
 import Swal from 'sweetalert2';
 import { GiCardboardBoxClosed } from 'react-icons/gi';
+import { Link, useNavigate } from 'react-router';
 
 const getStatusColor = (status) => {
     switch (status) {
@@ -29,6 +30,7 @@ const MyParcel = () => {
     const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
     const [isCardView, setIsCardView] = useState(true);
+    const navigate = useNavigate()
 
     const { data: parcels = [], refetch, isLoading, error } = useQuery({
         queryKey: ['my-parcels', user?.email],
@@ -79,12 +81,8 @@ const MyParcel = () => {
         });
     };
 
-    const handlePay = (parcel) => {
-        Swal.fire({
-            title: `💳 Payment`,
-            text: `Payment module for ৳${parcel.cost} coming soon!`,
-            icon: 'info',
-        });
+    const handlePay = (id) => {
+        navigate(`/dashboard/payment/${id}`)
     };
 
     if (isLoading) return <div className="text-center py-10 font-semibold text-lg">⏳ Loading parcels...</div>;
@@ -133,9 +131,9 @@ const MyParcel = () => {
                                 <button onClick={() => handleView(parcel)} className="btn btn-sm bg-blue-100 text-blue-800 hover:bg-blue-200">
                                     <FaEye /> View
                                 </button>
-                                <button onClick={() => handlePay(parcel)} className="btn btn-sm bg-green-100 text-green-800 hover:bg-green-200">
+                                <Link onClick={() => handlePay(parcel._id)} className="btn btn-sm bg-green-100 text-green-800 hover:bg-green-200">
                                     <FaMoneyBillWave /> Pay
-                                </button>
+                                </Link>
                                 <button onClick={() => handleDelete(parcel._id)} className="btn btn-sm bg-red-100 text-red-800 hover:bg-red-200">
                                     <FaTrashAlt /> Delete
                                 </button>

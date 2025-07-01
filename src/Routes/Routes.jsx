@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router"; // ✅ correct import
 import RootLayouts from "../Layouts/RootLayouts";
 import Home from "../Pages/Home/Home/Home";
 import AboutUs from "../Pages/About/AboutUs";
@@ -15,56 +15,60 @@ import Payment from "../Pages/Dashboard/Payment/Payment";
 export const router = createBrowserRouter([
     {
         path: '/',
-        Component: RootLayouts,
+        element: <RootLayouts />, // ✅ use element
         children: [
             {
                 path: '/',
-                Component: Home
+                element: <Home />
             },
             {
-                path: '/about-us',
-                Component: AboutUs
+                path: 'about-us',
+                element: <AboutUs />
             },
             {
-                path: '/coverage',
-                Component: Coverage
+                path: 'coverage',
+                element: <Coverage />
             },
             {
-                path: '/parcel-send',
-                element: <PrivateRoutes>
-                    <SendParcel />
-                </PrivateRoutes>
+                path: 'parcel-send',
+                element: (
+                    <PrivateRoutes>
+                        <SendParcel />
+                    </PrivateRoutes>
+                )
             }
         ]
     },
     {
         path: '/',
-        Component: AuthLayouts,
+        element: <AuthLayouts />,
         children: [
             {
-                path: '/login',
-                Component: LogIn
+                path: 'login',
+                element: <LogIn />
             },
             {
-                path: '/register',
-                Component: Register
+                path: 'register',
+                element: <Register />
             }
         ]
     },
     {
-        path: '/dashboard',
-        element: <PrivateRoutes>
-            <DashboardLayout />
-        </PrivateRoutes>,
+        path: 'dashboard',
+        element: (
+            <PrivateRoutes>
+                <DashboardLayout />
+            </PrivateRoutes>
+        ),
         children: [
             {
                 path: 'my-parcel',
-                Component: MyParcel
+                element: <MyParcel />
             },
             {
-                path: '/payment/:id',
-                Component: Payment,
-            },
+                path: 'payment/:id',
+                element: <Payment /> // ✅ fixed from "/payment/:id"
+            }
         ]
     }
-])
+]);
