@@ -6,7 +6,16 @@ import useAuth from '../../../Hooks/useAuth/useAuth';
 const Navbar = () => {
     const [showNavbar, setShowNavbar] = useState(true);
     const [lastScrollY, setLastScrollY] = useState(0);
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
+
+    const handleLogout = () => {
+        logout().then(result => {
+            console.log(result);
+        })
+            .catch(err => {
+                console.log(err);
+            })
+    }
 
     useEffect(() => {
         const handleScroll = () => {
@@ -60,9 +69,33 @@ const Navbar = () => {
                 </ul>
             </div>
             <div className="navbar-end">
-                <Link className='btn btn-primary text-black ' to='/login'>
-                    Login
-                </Link>
+                {user ? (
+                    <div className="dropdown dropdown-end">
+                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                            <div className="w-10 rounded-full">
+                                <img
+                                    alt="Tailwind CSS Navbar component"
+                                    src={user?.photoURL} />
+                            </div>
+                        </div>
+                        <ul
+                            tabIndex={0}
+                            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+                            <li>
+                                <a className="justify-between">
+                                    Profile
+                                    <span className="badge">New</span>
+                                </a>
+                            </li>
+                            <li><a>Settings</a></li>
+                            <li><button onClick={handleLogout}>Logout</button></li>
+                        </ul>
+                    </div>
+                ) :
+                    <Link className='btn btn-primary text-black ' to='/login'>
+                        Login
+                    </Link>
+                }
             </div>
         </div>
     );

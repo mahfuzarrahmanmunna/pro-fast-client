@@ -1,9 +1,14 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import SocialLogin from '../ScosalLogin/SocialLogin';
+import useAuth from '../../../Hooks/useAuth/useAuth';
 
 const LogIn = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from || '/';
+    const { signIn } = useAuth();
     const {
         register,
         handleSubmit,
@@ -42,7 +47,7 @@ const LogIn = () => {
                     <button className="btn btn-primary text-black mt-4">Login</button>
                 </form>
                 <p>New to this website. Please <Link className='text-blue-500 underline' to='/register'>Register</Link></p>
-                <SocialLogin />
+                <SocialLogin location={location} form={from} navigate={navigate} />
             </div>
         </div>
     );

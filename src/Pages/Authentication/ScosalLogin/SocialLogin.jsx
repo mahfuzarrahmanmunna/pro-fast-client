@@ -1,13 +1,14 @@
 import React from 'react';
 import useAuth from '../../../Hooks/useAuth/useAuth';
 
-const SocialLogin = () => {
+const SocialLogin = ({ location, navigate, from }) => {
     const { googleLogin } = useAuth();
 
     const handleGoogleLogin = () => {
         googleLogin()
             .then(result => {
                 console.log('User:', result.user);
+                navigate(from)
                 // You can redirect or show toast here
             })
             .catch(err => {

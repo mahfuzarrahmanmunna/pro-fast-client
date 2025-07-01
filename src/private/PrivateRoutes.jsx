@@ -4,16 +4,17 @@ import FallBack from '../Pages/Shared/FallBack/FallBack';
 import { Navigate, useLocation } from 'react-router';
 
 const PrivateRoutes = ({ children }) => {
-    const { user, loading } = useAuth()
-    const location = useLocation()
+    const { user, loading } = useAuth();
+    const location = useLocation();
 
     if (loading) {
-        return <FallBack />
+        return <FallBack />;
     }
 
-    if (!user || user?.email) {
-        <Navigate to='/login' state={{ from: location.state }} replace />
+    if (!user || !user?.email) {
+        return <Navigate to='/login' state={{ from: location.pathname }} replace />;
     }
+
     return children;
 };
 
