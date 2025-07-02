@@ -4,12 +4,14 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import useAxiosSecure from '../../../Hooks/useAuth/useAxiosSecure/useAxiosSecure';
 import FallBack from '../../Shared/FallBack/FallBack';
+import useAuth from '../../../Hooks/useAuth/useAuth';
 
 const PaymentForm = () => {
     const stripe = useStripe();
     const elements = useElements();
     const [error, setError] = useState('');
     const axiosSecure = useAxiosSecure();
+    const { user } = useAuth()
 
     const { id } = useParams();
     const { isPending, isError, data: parcelInfo = {} } = useQuery({
@@ -20,32 +22,58 @@ const PaymentForm = () => {
         }
     });
     const amount = parcelInfo.cost;
-    console.log(parcelInfo);
+    const amountInCent = amount * 100;
+    console.log(amountInCent);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!stripe || !elements) {
-            return;
-        }
-        const card = elements.getElement(CardElement);
-        if (!card) {
-            return;
-        }
+        if (!stripe || !elements) return;
 
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
+        const card = elements.getElement(CardElement);
+        if (!card) return;
+
+        // 1. Create payment method
+        const { error: paymentError, paymentMethod } = await stripe.createPaymentMethod({
             type: 'card',
             card,
         });
 
-        if (error) {
-            console.log(error);
-            setError(error.message)
+        if (paymentError) {
+            console.error(paymentError);
+            setError(paymentError.message);
+            return;
+        } else {
+            setError('');
         }
-        else {
+
+        // 2. Create payment intent from backend
+        const res = await axiosSecure.post('/create-payment-intent', {
+            amountInCent,
+            parcelId: id
+        });
+        const clientSecret = res.data.clientSecret;
+
+        // 3. Confirm payment
+        const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card,
+                billing_details: {
+                    name: user?.displayName || 'Unknown',
+                    email: user?.email || 'Unknown'
+                }
+            }
+        });
+
+        if (confirmError) {
+            console.error(confirmError);
+            setError(confirmError.message);
+        } else if (paymentIntent.status === 'succeeded') {
             setError('')
-            console.log(paymentMethod);
+            console.log('✅ Payment succeeded!');
+            // TODO: Save transaction details to backend if needed
         }
-    }
+    };
+
 
     if (isPending) {
         return <FallBack />
