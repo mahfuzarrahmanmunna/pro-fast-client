@@ -67,7 +67,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'payment/:id',
-                element: <Payment /> // ✅ fixed from "/payment/:id"
+                element: <Payment /> 
             }
         ]
     }
