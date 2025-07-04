@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
 import useAuth from '../../../Hooks/useAuth/useAuth';
-import useAxiosSecure from '../../../Hooks/useAuth/useAxiosSecure/useAxiosSecure';
+import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
 import Swal from 'sweetalert2';
 import { GiCardboardBoxClosed } from 'react-icons/gi';
 import { Link, useNavigate } from 'react-router';

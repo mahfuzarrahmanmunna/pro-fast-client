@@ -2,7 +2,7 @@ import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import { useParams } from 'react-router';
-import useAxiosSecure from '../../../Hooks/useAuth/useAxiosSecure/useAxiosSecure';
+import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
 import FallBack from '../../Shared/FallBack/FallBack';
 import useAuth from '../../../Hooks/useAuth/useAuth';
 import Swal from 'sweetalert2';

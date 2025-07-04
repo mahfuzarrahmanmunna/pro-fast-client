@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import useAuth from '../../Hooks/useAuth/useAuth';
-import useAxiosSecure from '../../Hooks/useAuth/useAxiosSecure/useAxiosSecure';
+import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const generateTrackingId = (prefix = 'TRK', region = 'GEN') => {
     const date = new Date();
