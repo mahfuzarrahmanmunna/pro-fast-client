@@ -1,26 +1,43 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router'; // ✅ fixed import
 import { motion } from 'framer-motion';
 import useAuth from '../../../Hooks/useAuth/useAuth';
+import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const SocialLogin = () => {
     const { googleLogin } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
+    const axiosSecure = useAxiosSecure();
 
-    // Capture where the user was trying to go before login
     const from = location.state?.from?.pathname || '/';
 
-    const handleGoogleLogin = () => {
-        googleLogin()
-            .then((result) => {
-                console.log('User:', result.user);
-                navigate(from); // Redirect to original location or '/'
-            })
-            .catch((err) => {
-                console.error('Google Login Error:', err);
-            });
+    const handleGoogleLogin = async () => {
+        try {
+            const result = await googleLogin(); // ✅ full result expected
+            const user = result?.user;
+
+            if (!user || !user.email) {
+                throw new Error('Google login failed or returned no user.');
+            }
+
+            const userDoc = {
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL,
+                uid: user.uid,
+                role: 'customer',
+            };
+
+            await axiosSecure.put('/users', userDoc);
+
+            console.log('Google login successful, user saved.');
+            navigate(from);
+        } catch (err) {
+            console.error('Google Login Error:', err.message || err);
+        }
     };
+
 
     return (
         <div>
@@ -40,22 +57,10 @@ const SocialLogin = () => {
                 >
                     <g>
                         <path fill="#fff" d="M0 0h512v512H0z" />
-                        <path
-                            fill="#34a853"
-                            d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
-                        />
-                        <path
-                            fill="#4285f4"
-                            d="M386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"
-                        />
-                        <path
-                            fill="#fbbc02"
-                            d="M90 341a208 200 0 010-171l63 49q-12 37 0 73"
-                        />
-                        <path
-                            fill="#ea4335"
-                            d="M153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"
-                        />
+                        <path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341" />
+                        <path fill="#4285f4" d="M386 400a140 175 0 0053-179H260v74h102q-7 37-38 57" />
+                        <path fill="#fbbc02" d="M90 341a208 200 0 010-171l63 49q-12 37 0 73" />
+                        <path fill="#ea4335" d="M153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55" />
                     </g>
                 </svg>
                 Login with Google

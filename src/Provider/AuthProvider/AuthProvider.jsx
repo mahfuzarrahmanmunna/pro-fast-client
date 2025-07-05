@@ -1,47 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { AuthContext } from '../../Context/AuthContext/AuthContext';
 import { auth } from '../../Firebase/firebase.init';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
+import {
+    updateProfile as firebaseUpdateProfile,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+} from 'firebase/auth';
 
-const googleProvider = new GoogleAuthProvider()
+const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
 
-    // Create User
+    // Create account with email and password
     const createUser = (email, password) => {
-        setLoading(true)
-        return createUserWithEmailAndPassword(auth, email, password)
-    }
+        setLoading(true);
+        return createUserWithEmailAndPassword(auth, email, password);
+    };
 
     // Sign in with email and password
     const signIn = (email, password) => {
-        setLoading(true)
-        return signInWithEmailAndPassword(auth, email, password)
-    }
+        setLoading(true);
+        return signInWithEmailAndPassword(auth, email, password);
+    };
 
-    // social Login
+    // ✅ Fixed: return the result from signInWithPopup
     const googleLogin = () => {
-        setLoading(true)
-        signInWithPopup(auth, googleProvider)
-    }
+        setLoading(true);
+        return signInWithPopup(auth, googleProvider);
+    };
 
     const logout = () => {
-        setLoading(true)
-        return signOut(auth)
-    }
+        setLoading(true);
+        return signOut(auth);
+    };
 
+    const updateUserProfile = (profile) => {
+        if (!auth.currentUser) throw new Error('No user logged in');
+        return firebaseUpdateProfile(auth.currentUser, profile);
+    };
+
+    // Listen for auth state changes
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, currentUser => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser);
-            console.log(currentUser);
-            setLoading(false)
-        })
-        return () => {
-            unsubscribe()
-        }
-    }, [])
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const authInfo = {
         user,
@@ -49,12 +61,14 @@ const AuthProvider = ({ children }) => {
         createUser,
         signIn,
         googleLogin,
-        logout
-    }
+        logout,
+        updateUserProfile,
+    };
+
     return (
-        <AuthContext value={authInfo}>
+        <AuthContext.Provider value={authInfo}>
             {children}
-        </AuthContext>
+        </AuthContext.Provider>
     );
 };
 
