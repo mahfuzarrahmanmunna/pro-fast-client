@@ -14,6 +14,7 @@ import Payment from "../Pages/Dashboard/Payment/Payment";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory/PaymentHistory";
 import TrackParcel from "../Pages/Dashboard/TrackParcel/TrackParcel";
 import Profile from "../Pages/Dashboard/Profile/Profile";
+import BeRider from "../Pages/Dashboard/BeRider/BeRider";
 
 export const router = createBrowserRouter([
     {
@@ -37,6 +38,14 @@ export const router = createBrowserRouter([
                 element: (
                     <PrivateRoutes>
                         <SendParcel />
+                    </PrivateRoutes>
+                )
+            },
+            {
+                path: 'be-a-rider',
+                element: (
+                    <PrivateRoutes>
+                        <BeRider />
                     </PrivateRoutes>
                 )
             }

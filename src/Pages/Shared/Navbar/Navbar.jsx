@@ -40,6 +40,7 @@ const Navbar = () => {
             <li><NavLink to="/parcel-send" className={({ isActive }) => isActive ? "text-primary" : ""}>Send a parcel</NavLink></li>
             {user &&
                 <>
+                    <li><NavLink to="/be-a-rider" className={({ isActive }) => isActive ? "text-primary" : ""}>Be a Rider</NavLink></li>
                     <li><NavLink to="/dashboard" className={({ isActive }) => isActive ? "text-primary" : ""}>Dashboard</NavLink></li>
                 </>
             }
