@@ -1,7 +1,7 @@
 import React from 'react';
-import { NavLink, Outlet } from 'react-router';
+import { NavLink, Outlet } from 'react-router'; // Note: `react-router` should be `react-router-dom`
 import ProFastLogo from '../../Pages/Shared/ProFast/ProFastLogo';
-import { FaBox, FaCreditCard, FaMapMarkedAlt, FaUser, FaBars } from 'react-icons/fa';
+import { FaBox, FaCreditCard, FaMapMarkedAlt, FaUser, FaBars, FaUsers, FaHourglassHalf } from 'react-icons/fa';
 
 const DashboardLayout = () => {
     return (
@@ -42,6 +42,17 @@ const DashboardLayout = () => {
                     <li>
                         <NavLink to="/dashboard/profile" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
                             <FaUser className="text-lg" /> Profile
+                        </NavLink>
+                    </li>
+                    {/* New routes for Active Riders and Pending Riders */}
+                    <li>
+                        <NavLink to="/dashboard/active-riders" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                            <FaUsers className="text-lg" /> Active Riders
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/dashboard/pending-riders" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                            <FaHourglassHalf className="text-lg" /> Pending Riders
                         </NavLink>
                     </li>
                 </ul>
