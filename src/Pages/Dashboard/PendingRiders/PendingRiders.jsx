@@ -1,69 +1,162 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
+import Swal from 'sweetalert2';
 
 const PendingRiders = () => {
-    const [pendingRiders, setPendingRiders] = useState([]);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false); // Loading state
+    const [selectedRider, setSelectedRider] = useState(null);
     const axiosSecure = useAxiosSecure();
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        const fetchPendingRiders = async () => {
-            setLoading(true); // Start loading
-            try {
-                const response = await axiosSecure.get(`/be-rider/pending`); // Adjust with the correct API URL for pending riders
-                setPendingRiders(response.data);
-            } catch (err) {
-                setError('Failed to fetch pending riders');
-                console.error('Error fetching pending riders:', err);
-            } finally {
-                setLoading(false); // End loading
+    const {
+        data: pendingRiders = [],
+        isLoading,
+        isError,
+        error,
+    } = useQuery({
+        queryKey: ['pendingRiders'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/be-rider/pending');
+            return res.data;
+        },
+    });
+
+    const approveMutation = useMutation({
+        mutationFn: (id) => axiosSecure.put(`/be-rider/approve/${id}`),
+        onSuccess: () => queryClient.invalidateQueries(['pendingRiders'])
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: (id) => axiosSecure.delete(`/be-rider/${id}`),
+        onSuccess: () => queryClient.invalidateQueries(['pendingRiders'])
+    });
+
+    const handleApprove = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to approve this rider.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, approve it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                approveMutation.mutate(id, {
+                    onSuccess: () => {
+                        Swal.fire('Approved!', 'Rider has been approved.', 'success');
+                    },
+                    onError: () => {
+                        Swal.fire('Error!', 'Something went wrong.', 'error');
+                    }
+                });
             }
-        };
-
-        fetchPendingRiders();
-    }, []);
-
-    // Handle rider approval
-    const handleApprove = async (id) => {
-        try {
-            await axiosSecure.put(`/be-rider/approve/${id}`); // Update status to active
-            // Update the state to reflect the approval immediately without refetching
-            setPendingRiders(prevRiders => prevRiders.map(rider =>
-                rider._id === id ? { ...rider, status: 'active' } : rider
-            ));
-        } catch (err) {
-            console.error('Error approving rider:', err);
-            setError('Failed to approve rider');
-        }
+        });
     };
 
+
+    const handleDelete = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will permanently delete the application!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteMutation.mutate(id, {
+                    onSuccess: () => {
+                        Swal.fire('Deleted!', 'Rider application has been deleted.', 'success');
+                    },
+                    onError: () => {
+                        Swal.fire('Error!', 'Failed to delete application.', 'error');
+                    }
+                });
+            }
+        });
+    };
+
+
     return (
-        <div>
-            <h2 className="text-2xl font-semibold">Pending Riders</h2>
-            {loading && <p>Loading pending riders...</p>} {/* Show loading message */}
-            {error && <p className="text-red-500">{error}</p>}
-            <ul>
-                {pendingRiders.length > 0 ? (
-                    pendingRiders.map((rider) => (
-                        <li key={rider._id} className="border-b py-2">
-                            <p><strong>Name:</strong> {rider.name}</p>
-                            <p><strong>Email:</strong> {rider.email}</p>
-                            <p><strong>Phone:</strong> {rider.phone}</p>
-                            <p><strong>Address:</strong> {rider.address}</p>
-                            <p><strong>Region:</strong> {rider.region}</p>
+        <div className="p-4">
+            <h2 className="text-3xl font-semibold mb-4">Pending Rider Applications</h2>
+
+            {isLoading && <p>Loading pending riders...</p>}
+            {isError && <p className="text-red-500">{error.message}</p>}
+
+            {pendingRiders.length > 0 ? (
+                <div className="overflow-x-auto">
+                    <table className="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pendingRiders.map((rider, index) => (
+                                <tr key={rider._id}>
+                                    <td>{index + 1}</td>
+                                    <td>{rider.name}</td>
+                                    <td>{rider.email}</td>
+                                    <td>{rider.contact}</td>
+                                    <td>{rider.status}</td>
+                                    <td className="space-x-2">
+                                        <button
+                                            onClick={() => setSelectedRider(rider)}
+                                            className="btn btn-xs btn-info"
+                                        >
+                                            View
+                                        </button>
+                                        <button
+                                            onClick={() => handleApprove(rider._id)}
+                                            className="btn btn-xs btn-success"
+                                        >
+                                            Approve
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(rider._id)}
+                                            className="btn btn-xs btn-error"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <p>No pending rider applications.</p>
+            )}
+
+            {/* Modal for viewing rider info */}
+            {selectedRider && (
+                <dialog id="riderModal" className="modal modal-open">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg mb-4">Rider Details</h3>
+                        <p><strong>Name:</strong> {selectedRider.name}</p>
+                        <p><strong>Email:</strong> {selectedRider.email}</p>
+                        <p><strong>Phone:</strong> {selectedRider.contact}</p>
+                        <p><strong>Address:</strong> {selectedRider.region}</p>
+                        <p><strong>Region:</strong> {selectedRider.region}</p>
+                        <p><strong>Status:</strong> {selectedRider.status}</p>
+
+                        <div className="modal-action">
                             <button
-                                onClick={() => handleApprove(rider._id)}
-                                className="btn btn-primary"
+                                onClick={() => setSelectedRider(null)}
+                                className="btn btn-outline"
                             >
-                                Approve
+                                Close
                             </button>
-                        </li>
-                    ))
-                ) : (
-                    <p>No pending riders at the moment.</p>
-                )}
-            </ul>
+                        </div>
+                    </div>
+                </dialog>
+            )}
         </div>
     );
 };

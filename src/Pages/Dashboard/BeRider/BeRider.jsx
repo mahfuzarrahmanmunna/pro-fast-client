@@ -5,137 +5,142 @@ import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
 import Swal from 'sweetalert2';
 
 const BeRider = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const [regions, setRegions] = useState([]); // State to hold regions
-    const axiosSecure = useAxiosSecure()
+    const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    const [regions, setRegions] = useState([]);
+    const axiosSecure = useAxiosSecure();
 
-    // Fetching data from the warehouses.json file
     useEffect(() => {
         fetch('/warehouses.json')
-            .then((response) => response.json())
-            .then((data) => {
-                // Extract unique regions
-                const uniqueRegions = [...new Set(data.map((warehouse) => warehouse.region))];
-                setRegions(uniqueRegions); // Set unique regions to state
+            .then(res => res.json())
+            .then(data => {
+                const uniqueRegions = [...new Set(data.map(warehouse => warehouse.region))];
+                setRegions(uniqueRegions);
             })
-            .catch((error) => console.error('Error fetching warehouse data:', error));
+            .catch(error => console.error('Error loading warehouse data:', error));
     }, []);
 
     const onSubmit = async (data) => {
         try {
             const response = await axiosSecure.post(`${import.meta.env.VITE_API_URL}/be-rider`, data);
-            console.log(response.data);
-            // handle success, like showing a confirmation message
             if (response.data.insertedId) {
                 Swal.fire({
-                    position: "center",
-                    icon: "success",
-                    title: "You have to successfully applied for Rider",
-                    showConfirmButton: false,
-                    timer: 1500
+                    icon: 'success',
+                    title: 'Application Submitted',
+                    text: 'Your rider application has been submitted and is pending review.',
+                    confirmButtonColor: '#CAEB66'
                 });
+                reset();
             }
         } catch (error) {
-            console.error(error);
-            // handle error
+            console.error('Error submitting form:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Submission Failed',
+                text: 'Something went wrong. Please try again later.',
+            });
         }
     };
 
     return (
-        <div className="flex justify-center items-center py-10 px-4 lg:px-16">
-            <div className="flex flex-col lg:flex-row bg-white p-8 rounded-xl shadow-lg w-full max-w-7xl">
+        <div className="flex justify-center items-center py-10 px-4 sm:px-6 lg:px-16">
+            <div className="flex flex-col lg:flex-row-reverse bg-white p-6 sm:p-8 lg:p-12 rounded-xl shadow-lg w-full max-w-7xl gap-10">
+                {/* Rider Image */}
+                <div className="flex justify-center items-center">
+                    <img
+                        src={rider}
+                        alt="Rider Illustration"
+                        className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl object-contain"
+                    />
+                </div>
+
                 {/* Form Section */}
-                <div className="flex-1 space-y-6 lg:space-y-8">
-                    <div className='pb-12 border-b border-gray-400'>
-                        <h1 className="text-3xl font-semibold text-gray-800 text-center lg:text-left">Be a Rider</h1>
-                        <p className="text-gray-600 text-center lg:text-left">
-                            Enjoy fast, reliable parcel delivery with real-time tracking and zero hassle. From personal <br /> packages to business shipments – we deliver on time, every time.
-                        </p>
-                    </div>
-                    <div className='md:flex'>
-                        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                            <div className="space-y-2">
-                                <label className="text-gray-700">Your Name</label>
-                                <input
-                                    type="text"
-                                    {...register('name', { required: 'Name is required' })}
-                                    className="input input-bordered input-primary w-full focus:outline-none focus:ring-2 focus:ring-[#CAEB66]"
-                                />
-                                {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-gray-700">Your Age</label>
-                                <input
-                                    type="number"
-                                    {...register('age', { required: 'Age is required' })}
-                                    className="input input-bordered input-primary w-full focus:outline-none focus:ring-2 focus:ring-[#CAEB66]"
-                                />
-                                {errors.age && <span className="text-red-500 text-sm">{errors.age.message}</span>}
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-gray-700">Your Email</label>
-                                <input
-                                    type="email"
-                                    {...register('email', { required: 'Email is required' })}
-                                    className="input input-bordered input-primary w-full focus:outline-none focus:ring-2 focus:ring-[#CAEB66]"
-                                />
-                                {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
-                            </div>
+                <div className="flex-1">
+                    <h2 className="text-3xl font-bold text-gray-800 mb-6">Apply to Be a Rider</h2>
+                    <p className="text-gray-600 mb-8">
+                        Deliver smiles and parcels. Become part of our fast-growing logistics network.
+                    </p>
 
-                            {/* Dynamically populated Region dropdown */}
-                            <div className="space-y-2">
-                                <label className="text-gray-700">Your Region</label>
-                                <select {...register('region', { required: 'Region is required' })} className="select select-bordered w-full focus:ring-2 focus:ring-[#CAEB66]">
-                                    <option value="">Select your region</option>
-                                    {regions.map((region, index) => (
-                                        <option key={index} value={region}>{region}</option>
-                                    ))}
-                                </select>
-                                {errors.region && <span className="text-red-500 text-sm">{errors.region.message}</span>}
-                            </div>
+                    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="col-span-1">
+                            <label className="block mb-1 font-medium text-gray-700">Full Name</label>
+                            <input
+                                type="text"
+                                {...register('name', { required: 'Name is required' })}
+                                className="input input-bordered w-full"
+                            />
+                            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+                        </div>
 
-                            <div className="space-y-2">
-                                <label className="text-gray-700">NID No</label>
-                                <input
-                                    type="text"
-                                    {...register('nid', { required: 'NID is required' })}
-                                    className="input input-bordered input-primary w-full focus:outline-none focus:ring-2 focus:ring-[#CAEB66]"
-                                />
-                                {errors.nid && <span className="text-red-500 text-sm">{errors.nid.message}</span>}
-                            </div>
+                        <div className="col-span-1">
+                            <label className="block mb-1 font-medium text-gray-700">Age</label>
+                            <input
+                                type="number"
+                                {...register('age', { required: 'Age is required' })}
+                                className="input input-bordered w-full"
+                            />
+                            {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age.message}</p>}
+                        </div>
 
-                            <div className="space-y-2">
-                                <label className="text-gray-700">Contact</label>
-                                <input
-                                    type="text"
-                                    {...register('contact', { required: 'Contact number is required' })}
-                                    className="input input-bordered input-primary w-full focus:outline-none focus:ring-2 focus:ring-[#CAEB66]"
-                                />
-                                {errors.contact && <span className="text-red-500 text-sm">{errors.contact.message}</span>}
-                            </div>
+                        <div className="col-span-1">
+                            <label className="block mb-1 font-medium text-gray-700">Email</label>
+                            <input
+                                type="email"
+                                {...register('email', { required: 'Email is required' })}
+                                className="input input-bordered w-full"
+                            />
+                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                        </div>
 
-                            <div className="space-y-2 col-span-2">
-                                <label className="text-gray-700">Which warehouse you want to work?</label>
-                                <select {...register('warehouse', { required: 'Warehouse is required' })} className="select select-bordered w-full focus:ring-2 focus:ring-[#CAEB66]">
-                                    <option value="">Select warehouse</option>
-                                    <option value="warehouse1">Warehouse 1</option>
-                                    <option value="warehouse2">Warehouse 2</option>
-                                </select>
-                                {errors.warehouse && <span className="text-red-500 text-sm">{errors.warehouse.message}</span>}
-                            </div>
+                        <div className="col-span-1">
+                            <label className="block mb-1 font-medium text-gray-700">Region</label>
+                            <select {...register('region', { required: 'Region is required' })} className="select select-bordered w-full">
+                                <option value="">Select Region</option>
+                                {regions.map((region, index) => (
+                                    <option key={index} value={region}>{region}</option>
+                                ))}
+                            </select>
+                            {errors.region && <p className="text-red-500 text-sm mt-1">{errors.region.message}</p>}
+                        </div>
 
+                        <div className="col-span-1">
+                            <label className="block mb-1 font-medium text-gray-700">NID Number</label>
+                            <input
+                                type="text"
+                                {...register('nid', { required: 'NID is required' })}
+                                className="input input-bordered w-full"
+                            />
+                            {errors.nid && <p className="text-red-500 text-sm mt-1">{errors.nid.message}</p>}
+                        </div>
+
+                        <div className="col-span-1">
+                            <label className="block mb-1 font-medium text-gray-700">Contact Number</label>
+                            <input
+                                type="text"
+                                {...register('contact', { required: 'Contact number is required' })}
+                                className="input input-bordered w-full"
+                            />
+                            {errors.contact && <p className="text-red-500 text-sm mt-1">{errors.contact.message}</p>}
+                        </div>
+
+                        <div className="col-span-1 md:col-span-2">
+                            <label className="block mb-1 font-medium text-gray-700">Preferred Warehouse</label>
+                            <select {...register('warehouse', { required: 'Warehouse is required' })} className="select select-bordered w-full">
+                                <option value="">Select warehouse</option>
+                                <option value="warehouse1">Warehouse 1</option>
+                                <option value="warehouse2">Warehouse 2</option>
+                            </select>
+                            {errors.warehouse && <p className="text-red-500 text-sm mt-1">{errors.warehouse.message}</p>}
+                        </div>
+
+                        <div className="col-span-1 md:col-span-2">
                             <button
                                 type="submit"
-                                className="btn btn-primary w-full col-span-2 bg-[#CAEB66] text-white hover:bg-[#A8D94F] focus:outline-none focus:ring-2 focus:ring-[#CAEB66]"
+                                className="btn btn-primary w-full bg-[#CAEB66] hover:bg-[#A8D94F] text-black"
                             >
-                                Submit
+                                Submit Application
                             </button>
-                        </form>
-                        {/* Illustration Section */}
-                        <div className="flex-1 flex justify-center items-center mt-6 lg:mt-0" data-aos="fade-left" data-aos-duration="1000">
-                            <img src={rider} alt="Rider Illustration" className="max-w-xs lg:max-w-md" />
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
