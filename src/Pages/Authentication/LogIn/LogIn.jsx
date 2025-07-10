@@ -6,12 +6,12 @@ import useAuth from '../../../Hooks/useAuth/useAuth';
 import { motion } from 'framer-motion';
 
 const LogIn = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const from = location.state?.from || '/';
     const { signIn } = useAuth();
 
     const [loading, setLoading] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from || '/';
 
     const {
         register,
@@ -23,7 +23,9 @@ const LogIn = () => {
         setLoading(true);
         try {
             await signIn(data.email, data.password);
-            navigate(from);
+            if (data) {
+                navigate(from);
+            }
         } catch (error) {
             console.error(error);
             // Handle error (e.g., show an error toast or message)
@@ -93,7 +95,7 @@ const LogIn = () => {
 
                 <p>
                     New to this website? Please{' '}
-                    <Link className="text-blue-500 underline" to="/register">
+                    <Link state={{ from }} className="text-blue-500 underline" to="/register">
                         Register
                     </Link>
                 </p>

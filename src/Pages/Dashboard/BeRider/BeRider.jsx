@@ -3,11 +3,13 @@ import { useForm } from 'react-hook-form';
 import rider from '../../../assets/agent-pending.png';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
 import Swal from 'sweetalert2';
+import useAuth from '../../../Hooks/useAuth/useAuth';
 
 const BeRider = () => {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const [regions, setRegions] = useState([]);
     const axiosSecure = useAxiosSecure();
+    const { user } = useAuth()
 
     useEffect(() => {
         fetch('/warehouses.json')
@@ -66,6 +68,8 @@ const BeRider = () => {
                             <input
                                 type="text"
                                 {...register('name', { required: 'Name is required' })}
+                                defaultValue={user?.email}
+                                disabled
                                 className="input input-bordered w-full"
                             />
                             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
@@ -86,6 +90,8 @@ const BeRider = () => {
                             <input
                                 type="email"
                                 {...register('email', { required: 'Email is required' })}
+                                defaultValue={user.displayName}
+                                disabled
                                 className="input input-bordered w-full"
                             />
                             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}

@@ -22,16 +22,20 @@ const PendingRiders = () => {
     });
 
     const approveMutation = useMutation({
-        mutationFn: (id) => axiosSecure.put(`/be-rider/approve/${id}`),
+        mutationFn: ({ id, email }) => axiosSecure.put(`/be-rider/approve/${id}`, { email }),
         onSuccess: () => queryClient.invalidateQueries(['pendingRiders'])
     });
 
     const deleteMutation = useMutation({
         mutationFn: (id) => axiosSecure.delete(`/be-rider/${id}`),
-        onSuccess: () => queryClient.invalidateQueries(['pendingRiders'])
+        onSuccess: () => {
+            queryClient.invalidateQueries(['pendingRiders']);
+            Swal.fire('Deleted!', 'Rider application has been deleted.', 'success');
+        },
+        onError: () => Swal.fire('Error!', 'Failed to delete application.', 'error')
     });
 
-    const handleApprove = (id) => {
+    const handleApprove = (id, rider) => {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You are about to approve this rider.',
@@ -41,18 +45,10 @@ const PendingRiders = () => {
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                approveMutation.mutate(id, {
-                    onSuccess: () => {
-                        Swal.fire('Approved!', 'Rider has been approved.', 'success');
-                    },
-                    onError: () => {
-                        Swal.fire('Error!', 'Something went wrong.', 'error');
-                    }
-                });
+                approveMutation.mutate({ id, email: rider.email });
             }
         });
     };
-
 
     const handleDelete = (id) => {
         Swal.fire({
@@ -64,18 +60,10 @@ const PendingRiders = () => {
             cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteMutation.mutate(id, {
-                    onSuccess: () => {
-                        Swal.fire('Deleted!', 'Rider application has been deleted.', 'success');
-                    },
-                    onError: () => {
-                        Swal.fire('Error!', 'Failed to delete application.', 'error');
-                    }
-                });
+                deleteMutation.mutate(id);
             }
         });
     };
-
 
     return (
         <div className="p-4">
@@ -113,7 +101,7 @@ const PendingRiders = () => {
                                             View
                                         </button>
                                         <button
-                                            onClick={() => handleApprove(rider._id)}
+                                            onClick={() => handleApprove(rider._id, rider)}
                                             className="btn btn-xs btn-success"
                                         >
                                             Approve
@@ -142,7 +130,6 @@ const PendingRiders = () => {
                         <p><strong>Name:</strong> {selectedRider.name}</p>
                         <p><strong>Email:</strong> {selectedRider.email}</p>
                         <p><strong>Phone:</strong> {selectedRider.contact}</p>
-                        <p><strong>Address:</strong> {selectedRider.region}</p>
                         <p><strong>Region:</strong> {selectedRider.region}</p>
                         <p><strong>Status:</strong> {selectedRider.status}</p>
 

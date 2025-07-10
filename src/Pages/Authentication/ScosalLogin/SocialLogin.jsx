@@ -16,6 +16,9 @@ const SocialLogin = () => {
         try {
             const result = await googleLogin(); // ✅ full result expected
             const user = result?.user;
+            if (user) {
+                navigate(from);
+            }
 
             if (!user || !user.email) {
                 throw new Error('Google login failed or returned no user.');
@@ -32,7 +35,7 @@ const SocialLogin = () => {
             await axiosSecure.put('/users', userDoc);
 
             console.log('Google login successful, user saved.');
-            navigate(from);
+
         } catch (err) {
             console.error('Google Login Error:', err.message || err);
         }

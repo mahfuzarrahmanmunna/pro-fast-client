@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useAuth from '../../../Hooks/useAuth/useAuth';
-import { Link } from 'react-router';  // ✅ Fixed import
+import { Link, useLocation, useNavigate } from 'react-router';
 import SocialLogin from '../ScosalLogin/SocialLogin';
 import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
+import Swal from 'sweetalert2';
 
 const Register = () => {
     const { createUser, updateUserProfile } = useAuth();
@@ -12,6 +13,9 @@ const Register = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const axiosSecure = useAxiosSecure();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from || '/';
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -54,7 +58,7 @@ const Register = () => {
             // Update Firebase profile
             await updateUserProfile({ displayName: data.name, photoURL: imageUrl });
 
-            // Save or update user in DB
+            // Save user in your database
             const savedUser = {
                 name: data.name,
                 email: data.email,
@@ -65,9 +69,17 @@ const Register = () => {
 
             await axiosSecure.put('/users', savedUser);
 
-            alert('User registered successfully!');
+            // ✅ SweetAlert success
+            Swal.fire({
+                title: 'Success!',
+                text: 'User registered successfully!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+
             reset();
             setSelectedImage(null);
+            navigate(from);
         } catch (error) {
             console.error('Error during registration:', error);
             if (error.code === 'auth/email-already-in-use') {
@@ -83,64 +95,66 @@ const Register = () => {
     };
 
     return (
-        <div>
-            <div className="card bg-base-100 w-full max-w-sm shrink-0 my-12">
+        <div className="flex justify-center items-center min-h-screen bg-gray-50">
+            <div className="card bg-base-100 w-full max-w-sm p-6 border border-gray-200">
                 <div className="card-body">
-                    <h1 className="text-5xl font-bold">Register now!</h1>
-                    <form onSubmit={handleSubmit(onSubmit)} className="fieldset">
+                    <h1 className="text-3xl font-bold text-center mb-4">Register</h1>
+                    <form onSubmit={handleSubmit(onSubmit)}>
 
                         <label className="label">Name</label>
                         <input
                             type="text"
                             {...register('name', { required: true })}
-                            className="input"
+                            className="input input-bordered w-full"
                             placeholder="Your Name"
                         />
-                        {errors.name && <p className="text-red-500">Name is required</p>}
+                        {errors.name && <p className="text-red-500 text-sm mt-1">Name is required</p>}
 
-                        <label className="label">Email</label>
+                        <label className="label mt-2">Email</label>
                         <input
                             type="email"
                             {...register('email', { required: true })}
-                            className="input"
+                            className="input input-bordered w-full"
                             placeholder="Email"
                         />
-                        {errors.email && <p className="text-red-500">Email is required</p>}
+                        {errors.email && <p className="text-red-500 text-sm mt-1">Email is required</p>}
 
-                        <label className="label">Password</label>
+                        <label className="label mt-2">Password</label>
                         <input
                             type="password"
                             {...register('password', { required: true, minLength: 6 })}
-                            className="input"
+                            className="input input-bordered w-full"
                             placeholder="Password"
                         />
-                        {errors.password?.type === 'required' && <p className="text-red-500">Password is required.</p>}
-                        {errors.password?.type === 'minLength' && <p className="text-red-500">Password must be at least 6 characters.</p>}
+                        {errors.password?.type === 'required' && <p className="text-red-500 text-sm mt-1">Password is required</p>}
+                        {errors.password?.type === 'minLength' && <p className="text-red-500 text-sm mt-1">Password must be at least 6 characters</p>}
 
-                        <label className="label">Profile Image</label>
+                        <label className="label mt-2">Profile Image</label>
                         <input
                             type="file"
                             accept="image/*"
                             onChange={handleImageChange}
-                            className="input"
+                            className="file-input file-input-bordered w-full"
                         />
-                        {!selectedImage && <p className="text-red-500">Profile image is required.</p>}
+                        {!selectedImage && <p className="text-red-500 text-sm mt-1">Profile image is required</p>}
 
                         {uploadError && <p className="text-red-500 mt-2">{uploadError}</p>}
 
-                        <div><a className="link link-hover">Forgot password?</a></div>
-
-                        <button type="submit" disabled={uploading} className="btn btn-primary text-black mt-4">
+                        <button type="submit" disabled={uploading} className="btn btn-primary w-full mt-4">
                             {uploading ? 'Registering...' : 'Register'}
                         </button>
                     </form>
 
-                    <p>
-                        Already have an account? Please{' '}
-                        <Link className="text-blue-500 underline" to="/login">Login</Link>
+                    <p className="mt-4 text-center">
+                        Already have an account?{' '}
+                        <Link state={{ from }} to="/login" className="text-blue-500 underline">
+                            Login
+                        </Link>
                     </p>
 
-                    <SocialLogin />
+                    <div className="mt-4">
+                        <SocialLogin />
+                    </div>
                 </div>
             </div>
         </div>
