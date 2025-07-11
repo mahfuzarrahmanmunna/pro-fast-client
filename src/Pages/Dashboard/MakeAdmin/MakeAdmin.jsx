@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
 import Swal from 'sweetalert2';
+import useAxiosSecure from '../../../Hooks/useAxiosSecure/useAxiosSecure';
 
 const MakeAdmin = () => {
     const [searchEmail, setSearchEmail] = useState('');
@@ -16,6 +16,7 @@ const MakeAdmin = () => {
             const res = await axiosSecure.get(`/users/search?email=${searchEmail}`);
             setUsers(res.data);
         } catch (error) {
+            console.error(error);
             setUsers([]);
             Swal.fire('Not Found', 'No user found with that email.', 'warning');
         } finally {
@@ -35,28 +36,19 @@ const MakeAdmin = () => {
         if (!confirm.isConfirmed) return;
 
         try {
-            // get Firebase token
-            const token = await user.getIdToken();
-
-            const res = await axiosSecure.put(`/users/role/${email}`, { role }, {
-                headers: {
-                    Authorization: `Bearer ${token}` // SEND TOKEN HERE
-                }
-            });
+            const res = await axiosSecure.put(`/users/role/${email}`, { role });
 
             if (res.data?.message) {
                 Swal.fire('Success', res.data.message, 'success');
-                setUsers((prev) =>
-                    prev.map((u) =>
-                        u.email === email ? { ...u, role } : u
-                    )
+                setUsers(prev =>
+                    prev.map(u => u.email === email ? { ...u, role } : u)
                 );
             }
         } catch (error) {
+            console.error(error);
             Swal.fire('Error', error.response?.data?.error || 'Role update failed.', 'error');
         }
     };
-    
 
     return (
         <div className="p-6">
