@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router'; // Note: `react-router` should be `react-router-dom`
 import ProFastLogo from '../../Pages/Shared/ProFast/ProFastLogo';
 import { FaBox, FaCreditCard, FaMapMarkedAlt, FaUser, FaBars, FaUsers, FaHourglassHalf } from 'react-icons/fa';
+import { GiAbdominalArmor } from 'react-icons/gi';
 
 const DashboardLayout = () => {
     return (
@@ -53,6 +54,11 @@ const DashboardLayout = () => {
                     <li>
                         <NavLink to="/dashboard/pending-riders" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
                             <FaHourglassHalf className="text-lg" /> Pending Riders
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/dashboard/make-admin" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                            <GiAbdominalArmor className="text-lg" /> Make Admin
                         </NavLink>
                     </li>
                 </ul>

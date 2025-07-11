@@ -17,6 +17,7 @@ import Profile from "../Pages/Dashboard/Profile/Profile";
 import BeRider from "../Pages/Dashboard/BeRider/BeRider";
 import ActiveRiders from "../Pages/Dashboard/ActiveRiders/ActiveRiders";
 import PendingRiders from "../Pages/Dashboard/PendingRiders/PendingRiders";
+import MakeAdmin from "../Pages/Dashboard/MakeAdmin/MakeAdmin";
 
 export const router = createBrowserRouter([
     {
@@ -102,6 +103,12 @@ export const router = createBrowserRouter([
             {
                 path: 'profile',
                 element: <Profile />
+            },
+            {
+                path: 'make-admin',
+                element: <PrivateRoutes>
+                    <MakeAdmin />
+                </PrivateRoutes>
             },
         ]
     }
