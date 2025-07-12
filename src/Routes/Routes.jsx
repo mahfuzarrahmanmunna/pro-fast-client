@@ -18,6 +18,9 @@ import BeRider from "../Pages/Dashboard/BeRider/BeRider";
 import ActiveRiders from "../Pages/Dashboard/ActiveRiders/ActiveRiders";
 import PendingRiders from "../Pages/Dashboard/PendingRiders/PendingRiders";
 import MakeAdmin from "../Pages/Dashboard/MakeAdmin/MakeAdmin";
+import Forbidden from "../Pages/Forbidden/Forbidden";
+import AdminRoute from "../private/AdminRoute/AdminRoute";
+import AssignRider from "../Pages/Dashboard/AssignRider/AssignRider";
 
 export const router = createBrowserRouter([
     {
@@ -65,6 +68,10 @@ export const router = createBrowserRouter([
             {
                 path: 'register',
                 element: <Register />
+            },
+            {
+                path: 'forbidden',
+                Component: Forbidden
             }
         ]
     },
@@ -81,6 +88,12 @@ export const router = createBrowserRouter([
                 element: <MyParcel />
             },
             {
+                path: 'assign-rider',
+                element: <AdminRoute>
+                    <AssignRider />
+                </AdminRoute>
+            },
+            {
                 path: 'payment/:id',
                 element: <Payment />
             },
@@ -94,11 +107,15 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'active-riders',
-                element: <ActiveRiders />
+                element: <AdminRoute>
+                    <ActiveRiders />
+                </AdminRoute>
             },
             {
                 path: 'pending-riders',
-                element: <PendingRiders />
+                element: <AdminRoute>
+                    <PendingRiders />
+                </AdminRoute>
             },
             {
                 path: 'profile',
@@ -107,7 +124,9 @@ export const router = createBrowserRouter([
             {
                 path: 'make-admin',
                 element: <PrivateRoutes>
-                    <MakeAdmin />
+                    <AdminRoute>
+                        <MakeAdmin />
+                    </AdminRoute>
                 </PrivateRoutes>
             },
         ]

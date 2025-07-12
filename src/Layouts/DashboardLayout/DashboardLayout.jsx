@@ -1,15 +1,31 @@
 import React from 'react';
-import { NavLink, Outlet } from 'react-router'; // Note: `react-router` should be `react-router-dom`
+import { NavLink, Outlet } from 'react-router';
 import ProFastLogo from '../../Pages/Shared/ProFast/ProFastLogo';
-import { FaBox, FaCreditCard, FaMapMarkedAlt, FaUser, FaBars, FaUsers, FaHourglassHalf } from 'react-icons/fa';
-import { GiAbdominalArmor } from 'react-icons/gi';
+import {
+    FaBoxOpen,
+    FaCreditCard,
+    FaMapMarkedAlt,
+    FaUserCircle,
+    FaBars,
+    FaUsers,
+    FaUserCheck,
+    FaUserClock,
+    FaUserShield,
+    FaUserTag,
+    FaUserEdit,
+    FaMotorcycle,
+} from 'react-icons/fa';
+import useUserRole from '../../Hooks/useUserRole/useUserRole';
+import { Toaster } from 'react-hot-toast';
 
 const DashboardLayout = () => {
+    const { role, loading } = useUserRole();
+
     return (
         <div className="drawer lg:drawer-open">
             <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
             <div className="drawer-content flex flex-col">
-                {/* Page content here */}
+                {/* Mobile navbar */}
                 <div className="navbar bg-base-300 w-full block lg:hidden">
                     <div className="flex items-center justify-between w-full px-4 py-2">
                         <label htmlFor="my-drawer-2" aria-label="open sidebar" className="btn btn-square btn-ghost">
@@ -20,47 +36,71 @@ const DashboardLayout = () => {
                 </div>
                 <Outlet />
             </div>
+            <Toaster />
             <div className="drawer-side">
-                <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
+                <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
                 <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4 space-y-2 text-[16px] font-medium">
-                    {/* Sidebar content here */}
                     <ProFastLogo />
+
+                    {/* ✨ Universal User Routes */}
                     <li>
-                        <NavLink to="/dashboard/my-parcel" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
-                            <FaBox className="text-lg" /> All Parcels
+                        <NavLink to="/dashboard/my-parcel" className={({ isActive }) =>
+                            isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                            <FaBoxOpen className="text-lg" /> My Parcels
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/dashboard/payment-history" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                        <NavLink to="/dashboard/payment-history" className={({ isActive }) =>
+                            isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
                             <FaCreditCard className="text-lg" /> Payment History
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/dashboard/track-package" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
-                            <FaMapMarkedAlt className="text-lg" /> Track a Package
+                        <NavLink to="/dashboard/track-package" className={({ isActive }) =>
+                            isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                            <FaMapMarkedAlt className="text-lg" /> Track Package
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/dashboard/profile" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
-                            <FaUser className="text-lg" /> Profile
+                        <NavLink to="/dashboard/profile" className={({ isActive }) =>
+                            isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                            <FaUserCircle className="text-lg" /> My Profile
                         </NavLink>
                     </li>
-                    {/* New routes for Active Riders and Pending Riders */}
-                    <li>
-                        <NavLink to="/dashboard/active-riders" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
-                            <FaUsers className="text-lg" /> Active Riders
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/dashboard/pending-riders" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
-                            <FaHourglassHalf className="text-lg" /> Pending Riders
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/dashboard/make-admin" className={({ isActive }) => isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
-                            <GiAbdominalArmor className="text-lg" /> Make Admin
-                        </NavLink>
-                    </li>
+
+                    {/* 🛡️ Admin Only Routes */}
+                    {
+                        !loading && role === 'admin' && (
+                            <>
+                                <li className="mt-4 mb-1 text-gray-500 uppercase text-xs tracking-wide pl-2">Admin Panel</li>
+
+                                <li>
+                                    <NavLink to="/dashboard/active-riders" className={({ isActive }) =>
+                                        isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                                        <FaUserCheck className="text-lg" /> Active Riders
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/pending-riders" className={({ isActive }) =>
+                                        isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                                        <FaUserClock className="text-lg" /> Pending Riders
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/make-admin" className={({ isActive }) =>
+                                        isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                                        <FaUserShield className="text-lg" /> Make Admin
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/assign-rider" className={({ isActive }) =>
+                                        isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                                        <FaMotorcycle className="text-lg" /> Assign Rider
+                                    </NavLink>
+                                </li>
+                            </>
+                        )
+                    }
                 </ul>
             </div>
         </div>

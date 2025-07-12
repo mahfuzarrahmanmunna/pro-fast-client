@@ -5,6 +5,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
+import { useNavigate } from 'react-router';
 
 const generateTrackingId = (prefix = 'TRK', region = 'GEN') => {
     const date = new Date();
@@ -27,6 +28,7 @@ const SendParcel = () => {
     const axiosSecure = useAxiosSecure();
     const senderRegion = watch('senderRegion');
     const receiverRegion = watch('receiverRegion');
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchWarehouses = async () => {
@@ -126,6 +128,7 @@ const SendParcel = () => {
                     const res = await axiosSecure.post('/add-parcel', fullData);
                     console.log(res.data.insertedId);
                     if (res.data.insertedId || res.data.acknowledged) {
+                        navigate('/dashboard/my-parcel')
                         Swal.fire({
                             icon: 'success',
                             title: '✅ Parcel Confirmed!',
