@@ -21,6 +21,7 @@ import MakeAdmin from "../Pages/Dashboard/MakeAdmin/MakeAdmin";
 import Forbidden from "../Pages/Forbidden/Forbidden";
 import AdminRoute from "../private/AdminRoute/AdminRoute";
 import AssignRider from "../Pages/Dashboard/AssignRider/AssignRider";
+import PendingDeliveries from "../Pages/Dashboard/PendingDeliveries/PendingDeliveries";
 
 export const router = createBrowserRouter([
     {
@@ -129,6 +130,10 @@ export const router = createBrowserRouter([
                     </AdminRoute>
                 </PrivateRoutes>
             },
+            {
+                path: 'pending-delivery',
+                element: <PendingDeliveries />
+            }
         ]
     }
 ]);

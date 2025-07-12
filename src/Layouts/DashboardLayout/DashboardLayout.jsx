@@ -7,19 +7,18 @@ import {
     FaMapMarkedAlt,
     FaUserCircle,
     FaBars,
-    FaUsers,
     FaUserCheck,
     FaUserClock,
     FaUserShield,
-    FaUserTag,
-    FaUserEdit,
     FaMotorcycle,
 } from 'react-icons/fa';
 import useUserRole from '../../Hooks/useUserRole/useUserRole';
 import { Toaster } from 'react-hot-toast';
+import { GiPendulumSwing, GiStorkDelivery } from 'react-icons/gi';
 
 const DashboardLayout = () => {
     const { role, loading } = useUserRole();
+    console.log(role);
 
     return (
         <div className="drawer lg:drawer-open">
@@ -67,6 +66,28 @@ const DashboardLayout = () => {
                             <FaUserCircle className="text-lg" /> My Profile
                         </NavLink>
                     </li>
+                    {/* Rider Link */}
+                    {
+                        !loading && role === 'rider' && (
+                            <>
+                                <li className="mt-4 mb-1 text-gray-500 uppercase text-xs tracking-wide pl-2">Rider Panel</li>
+
+                                <li>
+                                    <NavLink to="/dashboard/pending-delivery" className={({ isActive }) =>
+                                        isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                                        <GiStorkDelivery className="text-lg" /> Pending Delivery
+                                    </NavLink>
+                                </li>
+
+                                <li>
+                                    <NavLink to="/dashboard/in-progress" className={({ isActive }) =>
+                                        isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                                        <GiPendulumSwing className="text-lg" /> In-Progress Deliveries
+                                    </NavLink>
+                                </li>
+                            </>
+                        )
+                    }
 
                     {/* 🛡️ Admin Only Routes */}
                     {

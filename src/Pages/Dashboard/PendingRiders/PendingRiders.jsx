@@ -8,6 +8,7 @@ const PendingRiders = () => {
     const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
 
+    // Fetch pending riders
     const {
         data: pendingRiders = [],
         isLoading,
@@ -21,21 +22,33 @@ const PendingRiders = () => {
         },
     });
 
+    // Approve rider and update user role
     const approveMutation = useMutation({
-        mutationFn: ({ id, email }) => axiosSecure.put(`/be-rider/approve/${id}`, { email }),
-        onSuccess: () => queryClient.invalidateQueries(['pendingRiders'])
+        mutationFn: ({ id, email }) =>
+            axiosSecure.put(`/be-rider/approve/${id}`, { email }),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['pendingRiders']);
+            Swal.fire('Success!', 'Rider approved and role updated.', 'success');
+            setSelectedRider(null);
+        },
+        onError: () => {
+            Swal.fire('Error!', 'Approval failed.', 'error');
+        },
     });
 
+    // Delete rider application
     const deleteMutation = useMutation({
         mutationFn: (id) => axiosSecure.delete(`/be-rider/${id}`),
         onSuccess: () => {
             queryClient.invalidateQueries(['pendingRiders']);
-            Swal.fire('Deleted!', 'Rider application has been deleted.', 'success');
+            Swal.fire('Deleted!', 'Rider application deleted.', 'success');
         },
-        onError: () => Swal.fire('Error!', 'Failed to delete application.', 'error')
+        onError: () => Swal.fire('Error!', 'Failed to delete application.', 'error'),
     });
 
+    // Confirm approve
     const handleApprove = (id, rider) => {
+        console.log(rider);
         Swal.fire({
             title: 'Are you sure?',
             text: 'You are about to approve this rider.',
@@ -50,6 +63,7 @@ const PendingRiders = () => {
         });
     };
 
+    // Confirm delete
     const handleDelete = (id) => {
         Swal.fire({
             title: 'Are you sure?',
@@ -66,21 +80,22 @@ const PendingRiders = () => {
     };
 
     return (
-        <div className="p-4">
-            <h2 className="text-3xl font-semibold mb-4">Pending Rider Applications</h2>
+        <div className="p-4 max-w-6xl mx-auto">
+            <h2 className="text-3xl font-semibold mb-4 text-gray-800">Pending Rider Applications</h2>
 
             {isLoading && <p>Loading pending riders...</p>}
             {isError && <p className="text-red-500">{error.message}</p>}
 
             {pendingRiders.length > 0 ? (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-lg shadow border">
                     <table className="table table-zebra w-full">
-                        <thead>
+                        <thead className="bg-base-200">
                             <tr>
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Region</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -92,8 +107,13 @@ const PendingRiders = () => {
                                     <td>{rider.name}</td>
                                     <td>{rider.email}</td>
                                     <td>{rider.contact}</td>
-                                    <td>{rider.status}</td>
-                                    <td className="space-x-2">
+                                    <td>{rider.region || 'N/A'}</td>
+                                    <td>
+                                        <span className="badge badge-warning capitalize">
+                                            {rider.status}
+                                        </span>
+                                    </td>
+                                    <td className="flex flex-wrap gap-2">
                                         <button
                                             onClick={() => setSelectedRider(rider)}
                                             className="btn btn-xs btn-info"
@@ -119,7 +139,7 @@ const PendingRiders = () => {
                     </table>
                 </div>
             ) : (
-                <p>No pending rider applications.</p>
+                <p className="mt-4 text-gray-500">No pending rider applications.</p>
             )}
 
             {/* Modal for viewing rider info */}
@@ -127,11 +147,13 @@ const PendingRiders = () => {
                 <dialog id="riderModal" className="modal modal-open">
                     <div className="modal-box">
                         <h3 className="font-bold text-lg mb-4">Rider Details</h3>
-                        <p><strong>Name:</strong> {selectedRider.name}</p>
-                        <p><strong>Email:</strong> {selectedRider.email}</p>
-                        <p><strong>Phone:</strong> {selectedRider.contact}</p>
-                        <p><strong>Region:</strong> {selectedRider.region}</p>
-                        <p><strong>Status:</strong> {selectedRider.status}</p>
+                        <div className="space-y-2 text-gray-700 text-sm">
+                            <p><strong>Name:</strong> {selectedRider.name}</p>
+                            <p><strong>Email:</strong> {selectedRider.email}</p>
+                            <p><strong>Phone:</strong> {selectedRider.contact}</p>
+                            <p><strong>Region:</strong> {selectedRider.region}</p>
+                            <p><strong>Status:</strong> {selectedRider.status}</p>
+                        </div>
 
                         <div className="modal-action">
                             <button

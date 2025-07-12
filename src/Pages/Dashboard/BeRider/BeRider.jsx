@@ -68,7 +68,7 @@ const BeRider = () => {
                             <input
                                 type="text"
                                 {...register('name', { required: 'Name is required' })}
-                                defaultValue={user?.email}
+                                defaultValue={user?.displayName}
                                 disabled
                                 className="input input-bordered w-full"
                             />
@@ -90,7 +90,7 @@ const BeRider = () => {
                             <input
                                 type="email"
                                 {...register('email', { required: 'Email is required' })}
-                                defaultValue={user.displayName}
+                                defaultValue={user.email}
                                 disabled
                                 className="input input-bordered w-full"
                             />
