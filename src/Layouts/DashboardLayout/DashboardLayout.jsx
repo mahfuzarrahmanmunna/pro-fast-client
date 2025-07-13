@@ -11,6 +11,8 @@ import {
     FaUserClock,
     FaUserShield,
     FaMotorcycle,
+    FaCheckDouble,
+    FaWallet,
 } from 'react-icons/fa';
 import useUserRole from '../../Hooks/useUserRole/useUserRole';
 import { Toaster } from 'react-hot-toast';
@@ -80,9 +82,25 @@ const DashboardLayout = () => {
                                 </li>
 
                                 <li>
-                                    <NavLink to="/dashboard/in-progress" className={({ isActive }) =>
+                                    <NavLink to="/dashboard/in-progress-delivery" className={({ isActive }) =>
                                         isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
                                         <GiPendulumSwing className="text-lg" /> In-Progress Deliveries
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/dashboard/completed-deliveries" className={({ isActive }) =>
+                                        isActive ? "text-primary font-semibold" : "hover:text-primary flex items-center gap-2"}>
+                                        <FaCheckDouble className="text-lg" /> Completed Deliveries
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink
+                                        to="/dashboard/my-earnings"
+                                        className={({ isActive }) =>
+                                            isActive ? 'text-primary font-semibold' : 'hover:text-primary flex items-center gap-2'
+                                        }
+                                    >
+                                        <FaWallet className="text-lg" /> My Earnings
                                     </NavLink>
                                 </li>
                             </>

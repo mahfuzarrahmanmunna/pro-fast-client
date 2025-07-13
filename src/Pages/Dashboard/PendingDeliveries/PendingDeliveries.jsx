@@ -9,7 +9,7 @@ const PendingDeliveries = () => {
     const { user } = useAuth();
     const queryClient = useQueryClient();
 
-    // Fetch all parcels for this rider with status = rider_assigned or in-transit
+    // Fetch parcels assigned to this rider with status = rider_assigned or in-transit
     const { data: parcels = [], isLoading } = useQuery({
         queryKey: ['riderParcels', user?.email],
         queryFn: async () => {
@@ -21,19 +21,45 @@ const PendingDeliveries = () => {
 
     // Mutation to update parcel status
     const updateParcelStatus = useMutation({
-        mutationFn: ({ parcelId, status }) =>
-            axiosSecure.put(`/parcels/status/${parcelId}`, { status }),
+        mutationFn: async ({ parcelId, status }) => {
+            const res = await axiosSecure.put(`/parcels/status/${parcelId}`, { status });
+            return res.data;
+        },
         onSuccess: () => {
             queryClient.invalidateQueries(['riderParcels', user?.email]);
-            Swal.fire('Success', 'Parcel status updated', 'success');
+            Swal.fire('Success', 'Parcel status updated successfully.', 'success');
         },
         onError: () => {
-            Swal.fire('Error', 'Failed to update parcel status', 'error');
+            Swal.fire('Error', 'Failed to update parcel status.', 'error');
         }
     });
 
-    const handleStatusUpdate = (parcelId, newStatus) => {
-        updateParcelStatus.mutate({ parcelId, status: newStatus });
+    const handleStatusUpdate = (parcelId, currentStatus) => {
+        let nextStatus = '';
+        let confirmationText = '';
+
+        if (currentStatus === 'rider_assigned') {
+            nextStatus = 'in-transit';
+            confirmationText = 'Are you sure you want to mark this parcel as picked up?';
+        } else if (currentStatus === 'in-transit') {
+            nextStatus = 'delivered';
+            confirmationText = 'Are you sure you want to mark this parcel as delivered?';
+        } else {
+            return;
+        }
+
+        Swal.fire({
+            title: 'Confirm Action',
+            text: confirmationText,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, confirm it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                updateParcelStatus.mutate({ parcelId, status: nextStatus });
+            }
+        });
     };
 
     return (
@@ -73,9 +99,9 @@ const PendingDeliveries = () => {
                                         </span>
                                     </td>
                                     <td className="space-x-2">
-                                        {parcel.delivery_status === 'rider_assigned' && (
+                                        {parcel.delivery_status === 'rider-assigned' && (
                                             <button
-                                                onClick={() => handleStatusUpdate(parcel._id, 'in-transit')}
+                                                onClick={() => handleStatusUpdate(parcel._id, 'rider_assigned')}
                                                 className="btn btn-xs btn-warning"
                                             >
                                                 Mark Picked
@@ -83,7 +109,7 @@ const PendingDeliveries = () => {
                                         )}
                                         {parcel.delivery_status === 'in-transit' && (
                                             <button
-                                                onClick={() => handleStatusUpdate(parcel._id, 'delivered')}
+                                                onClick={() => handleStatusUpdate(parcel._id, 'in-transit')}
                                                 className="btn btn-xs btn-success"
                                             >
                                                 Mark Delivered
