@@ -9,17 +9,16 @@ const PendingDeliveries = () => {
     const { user } = useAuth();
     const queryClient = useQueryClient();
 
-    // Fetch parcels assigned to this rider with status = rider_assigned or in-transit
     const { data: parcels = [], isLoading } = useQuery({
         queryKey: ['riderParcels', user?.email],
         queryFn: async () => {
             const res = await axiosSecure.get(`/rider/pending-parcels?email=${user.email}`);
+            console.log(res.data); // for debugging
             return res.data;
         },
         enabled: !!user?.email,
     });
 
-    // Mutation to update parcel status
     const updateParcelStatus = useMutation({
         mutationFn: async ({ parcelId, status }) => {
             const res = await axiosSecure.put(`/parcels/status/${parcelId}`, { status });

@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import useAuth from '../../Hooks/useAuth/useAuth';
 import useAxiosSecure from '../../Hooks/useAxiosSecure/useAxiosSecure';
 import { useNavigate } from 'react-router';
+import useTracking from '../../Hooks/useTracking/useTracking';
 
 const generateTrackingId = (prefix = 'TRK', region = 'GEN') => {
     const date = new Date();
@@ -29,6 +30,7 @@ const SendParcel = () => {
     const senderRegion = watch('senderRegion');
     const receiverRegion = watch('receiverRegion');
     const navigate = useNavigate()
+    const { } = useTracking();
 
     useEffect(() => {
         const fetchWarehouses = async () => {

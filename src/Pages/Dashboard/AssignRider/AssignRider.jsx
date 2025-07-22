@@ -62,6 +62,7 @@ const AssignRider = () => {
 
     return (
         <div className="px-2 py-4 sm:p-4 max-w-7xl mx-auto text-sm">
+            <Toaster />
             <h2 className="text-lg sm:text-xl font-semibold mb-4">Assign Rider to Parcels</h2>
             <div className="overflow-x-auto border rounded-md shadow-sm">
                 <table className="table w-full text-sm overflow-x-scroll-auto">
@@ -79,7 +80,6 @@ const AssignRider = () => {
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <Toaster />
                     <tbody>
                         {parcels.map((parcel, index) => (
                             <tr key={parcel._id}>
